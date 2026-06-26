@@ -420,6 +420,54 @@
       line-height: 1.45;
     }
 
+    .citizen {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .citizen-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .citizen-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+      min-height: 116px;
+    }
+
+    .citizen-box strong {
+      color: var(--navy);
+      font-size: 14px;
+    }
+
+    .citizen-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .report-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .empty {
       padding: 28px;
       color: var(--muted);
@@ -455,6 +503,10 @@
       .official-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .citizen-grid, .report-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 560px) {
@@ -472,6 +524,10 @@
       }
 
       .official-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .citizen-grid, .report-grid {
         grid-template-columns: 1fr;
       }
 
@@ -630,6 +686,91 @@
           <div class="hint">Estos datos describen el evento sísmico y la activación de emergencia. Las zonas del ranking deben cargarse con evidencia propia, producto Copernicus o reporte oficial/terreno verificable.</div>
         </div>
 
+        <div class="citizen">
+          <h2>Para ciudadanos</h2>
+          <div class="citizen-grid">
+            <div class="citizen-box">
+              <strong>Emergencia inmediata</strong>
+              <p>Si hay personas atrapadas, heridas graves, fuego, fuga de gas o riesgo de colapso, llama a VEN 9-1-1 o al número local de emergencia disponible. Da ubicación, referencias y tipo de riesgo.</p>
+            </div>
+            <div class="citizen-box">
+              <strong>Si vuelve a temblar</strong>
+              <p>Agáchate, cúbrete y sujétate. Aléjate de ventanas y objetos pesados. No corras por escaleras durante la sacudida.</p>
+            </div>
+            <div class="citizen-box">
+              <strong>Después del sismo</strong>
+              <p>No entres en edificios dañados. Espera réplicas, ayuda a niños, mayores y personas con discapacidad, y usa mensajes de texto cuando las llamadas fallen.</p>
+            </div>
+          </div>
+          <div class="link-row">
+            <button id="ven911Link">VEN 9-1-1</button>
+            <button id="usgsSafetyLink">Qué hacer durante un sismo</button>
+            <button id="readyLink">Preparación y después del sismo</button>
+          </div>
+
+          <h3>Crear reporte ciudadano</h3>
+          <div class="report-grid">
+            <div class="field">
+              <label for="citizenPlace">Lugar</label>
+              <input id="citizenPlace" placeholder="Barrio, parroquia, municipio">
+            </div>
+            <div class="field">
+              <label for="citizenState">Estado</label>
+              <input id="citizenState" placeholder="Estado">
+            </div>
+            <div class="field">
+              <label for="citizenType">Tipo</label>
+              <select id="citizenType">
+                <option>Personas heridas o atrapadas</option>
+                <option>Edificación dañada</option>
+                <option>Vía bloqueada</option>
+                <option>Falta de agua/alimentos</option>
+                <option>Centro de salud afectado</option>
+                <option>Riesgo eléctrico/gas/incendio</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="citizenUrgency">Urgencia</label>
+              <select id="citizenUrgency">
+                <option value="5">Crítica</option>
+                <option value="4">Alta</option>
+                <option value="3">Media</option>
+                <option value="2">Baja</option>
+              </select>
+            </div>
+          </div>
+          <div class="report-grid">
+            <div class="field">
+              <label for="citizenPeople">Personas afectadas</label>
+              <input id="citizenPeople" type="number" min="0" step="1" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="citizenNeeds">Necesidad principal</label>
+              <input id="citizenNeeds" placeholder="Rescate, agua, medicinas, refugio...">
+            </div>
+            <div class="field">
+              <label for="citizenLat">Lat</label>
+              <input id="citizenLat" type="number" step="0.000001" placeholder="Opcional">
+            </div>
+            <div class="field">
+              <label for="citizenLon">Lon</label>
+              <input id="citizenLon" type="number" step="0.000001" placeholder="Opcional">
+            </div>
+          </div>
+          <div class="field">
+            <label for="citizenDetails">Detalles verificables</label>
+            <textarea id="citizenDetails" placeholder="Qué pasó, cuándo se observó, referencias cercanas, si hay fotos o testigos. No incluir nombres de víctimas."></textarea>
+          </div>
+          <div class="report-actions">
+            <button id="geoBtn">Usar mi ubicación</button>
+            <button id="buildReportBtn" class="primary">Generar reporte</button>
+            <button id="copyReportBtn">Copiar</button>
+            <button id="addCitizenBtn">Añadir al ranking como pendiente</button>
+          </div>
+          <textarea id="citizenReport" readonly placeholder="Aquí aparecerá el reporte listo para copiar por WhatsApp, SMS o formulario oficial."></textarea>
+          <div class="hint">Este reporte se genera en tu navegador. La página no envía datos automáticamente. En riesgo vital, llama primero a emergencias.</div>
+        </div>
+
         <div class="kpis" id="kpis"></div>
 
         <div class="toolbar">
@@ -689,7 +830,10 @@
       copernicus: "https://mapping.emergency.copernicus.eu/activations/EMSR884/",
       usgs: "https://earthquake.usgs.gov/earthquakes/eventpage/us6000t7zp",
       gdacs: "https://www.gdacs.org/report.aspx?eventid=1548377&eventtype=EQ",
-      gdacsForeshock: "https://gdacs.org/report.aspx?episodeid=1714423&eventid=1548473&eventtype=EQ"
+      gdacsForeshock: "https://gdacs.org/report.aspx?episodeid=1714423&eventid=1548473&eventtype=EQ",
+      ven911: "https://ven911.gob.ve/",
+      usgsSafety: "https://www.usgs.gov/faqs/what-should-i-do-during-earthquake",
+      ready: "https://www.ready.gov/earthquakes"
     };
 
     function uid() {
@@ -1144,6 +1288,104 @@
       URL.revokeObjectURL(url);
     }
 
+    function citizenValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function buildCitizenReport() {
+      const place = citizenValue("citizenPlace") || "Lugar no especificado";
+      const region = citizenValue("citizenState") || "Estado no especificado";
+      const type = citizenValue("citizenType");
+      const urgency = document.getElementById("citizenUrgency").selectedOptions[0].textContent;
+      const people = citizenValue("citizenPeople") || "No indicado";
+      const needs = citizenValue("citizenNeeds") || "No indicado";
+      const lat = citizenValue("citizenLat");
+      const lon = citizenValue("citizenLon");
+      const details = citizenValue("citizenDetails") || "Sin detalles adicionales";
+      const coords = lat && lon ? `${lat}, ${lon}` : "No indicada";
+      const now = new Date().toLocaleString("es-VE");
+
+      const report = [
+        "REPORTE CIUDADANO - SISMO VENEZUELA",
+        `Fecha/hora: ${now}`,
+        `Lugar: ${place}, ${region}`,
+        `Ubicación GPS: ${coords}`,
+        `Tipo de situación: ${type}`,
+        `Urgencia: ${urgency}`,
+        `Personas afectadas: ${people}`,
+        `Necesidad principal: ${needs}`,
+        `Detalles: ${details}`,
+        "Fuente: reporte ciudadano no verificado",
+        "Nota: verificar antes de publicar cifras o enviar recursos."
+      ].join("\n");
+
+      document.getElementById("citizenReport").value = report;
+      return report;
+    }
+
+    async function copyCitizenReport() {
+      const report = document.getElementById("citizenReport").value || buildCitizenReport();
+      try {
+        await navigator.clipboard.writeText(report);
+      } catch {
+        document.getElementById("citizenReport").select();
+        document.execCommand("copy");
+      }
+    }
+
+    function useGeolocation() {
+      if (!navigator.geolocation) {
+        alert("Este navegador no permite obtener ubicación.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(position => {
+        document.getElementById("citizenLat").value = position.coords.latitude.toFixed(6);
+        document.getElementById("citizenLon").value = position.coords.longitude.toFixed(6);
+        buildCitizenReport();
+      }, () => {
+        alert("No se pudo obtener la ubicación. Puedes escribirla manualmente.");
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
+    }
+
+    function addCitizenReportToRanking() {
+      const place = citizenValue("citizenPlace");
+      if (!place) {
+        alert("Indica el lugar antes de añadirlo al ranking.");
+        return;
+      }
+      const urgency = clamp(document.getElementById("citizenUrgency").value, 1, 5);
+      const type = citizenValue("citizenType");
+      const needs = citizenValue("citizenNeeds");
+      const people = Number(citizenValue("citizenPeople")) || 0;
+      const report = document.getElementById("citizenReport").value || buildCitizenReport();
+      const waterNeed = /agua|alimento|comida|refugio/i.test(needs + " " + type) ? urgency : 2;
+      const healthNeed = /herid|atrapad|salud|medicina|hospital/i.test(needs + " " + type) ? urgency : 2;
+      const accessNeed = /vía|via|bloqueada|acceso|carretera/i.test(type) ? urgency : 2;
+
+      state.zones.push({
+        id: uid(),
+        zone: place,
+        state: citizenValue("citizenState") || "Sin estado",
+        population: people,
+        lat: Number(citizenValue("citizenLat")) || "",
+        lon: Number(citizenValue("citizenLon")) || "",
+        damage: urgency,
+        access: accessNeed,
+        health: healthNeed,
+        water: waterNeed,
+        reports: 1,
+        verified: false,
+        sourceType: "field",
+        confirmations: 1,
+        sourceName: "Reporte ciudadano",
+        sourceUrl: "",
+        notes: report,
+        updated: new Date().toISOString()
+      });
+      save();
+      render();
+    }
+
     function csvEscape(value) {
       const text = String(value ?? "");
       return /[",\n]/.test(text) ? `"${text.replaceAll("\"", "\"\"")}"` : text;
@@ -1170,6 +1412,13 @@
     document.getElementById("usgsLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.usgs, "_blank", "noopener"));
     document.getElementById("gdacsLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.gdacs, "_blank", "noopener"));
     document.getElementById("gdacsForeshockLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.gdacsForeshock, "_blank", "noopener"));
+    document.getElementById("geoBtn").addEventListener("click", useGeolocation);
+    document.getElementById("buildReportBtn").addEventListener("click", buildCitizenReport);
+    document.getElementById("copyReportBtn").addEventListener("click", copyCitizenReport);
+    document.getElementById("addCitizenBtn").addEventListener("click", addCitizenReportToRanking);
+    document.getElementById("ven911Link").addEventListener("click", () => window.open(OFFICIAL_LINKS.ven911, "_blank", "noopener"));
+    document.getElementById("usgsSafetyLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.usgsSafety, "_blank", "noopener"));
+    document.getElementById("readyLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.ready, "_blank", "noopener"));
     els.search.addEventListener("input", event => {
       state.search = event.target.value;
       renderRows();
