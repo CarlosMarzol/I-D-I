@@ -1,0 +1,9 @@
+{
+  "name": "copernicus-priorizador",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Priorizador humanitario para zonas afectadas en Venezuela usando Copernicus EMS y reportes de terreno.",
+  "scripts": {
+    "start": "python3 -m http.server 3000"
+  }
+}
