@@ -136,7 +136,7 @@
       min-width: 0;
       padding: 16px;
       display: grid;
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: auto auto auto 1fr;
       gap: 14px;
       overflow: auto;
     }
@@ -372,6 +372,54 @@
       line-height: 1.45;
     }
 
+    .official {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .official-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .official-item {
+      display: grid;
+      gap: 3px;
+      min-height: 58px;
+    }
+
+    .official-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .official-item strong {
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .link-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .alert {
+      border: 1px solid #efbc5e;
+      background: #fff7e3;
+      color: #5e3700;
+      border-radius: var(--radius);
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     .empty {
       padding: 28px;
       color: var(--muted);
@@ -403,6 +451,10 @@
       .toolbar {
         grid-template-columns: 1fr;
       }
+
+      .official-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 560px) {
@@ -416,6 +468,10 @@
       }
 
       .grid-2, .grid-3, .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .official-grid {
         grid-template-columns: 1fr;
       }
 
@@ -505,14 +561,40 @@
             <div class="field">
               <label for="verified">Verificación</label>
               <select id="verified">
-                <option value="true">Verificado</option>
-                <option value="false">Sin verificar</option>
+                <option value="false">Pendiente</option>
+                <option value="true">Contrastado</option>
               </select>
             </div>
           </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="sourceType">Tipo de fuente</label>
+              <select id="sourceType">
+                <option value="copernicus">Copernicus EMS</option>
+                <option value="gdacs">GDACS</option>
+                <option value="usgs">USGS</option>
+                <option value="official">Autoridad/Protección Civil</option>
+                <option value="ngo">ONG/organismo humanitario</option>
+                <option value="field">Equipo de terreno</option>
+                <option value="media">Medio verificado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="confirmations">Confirmaciones</label>
+              <input id="confirmations" type="number" min="1" max="5" step="1" value="1">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sourceName">Fuente concreta</label>
+            <input id="sourceName" placeholder="Ej. Copernicus EMSR884, Protección Civil, hospital, ONG...">
+          </div>
+          <div class="field">
+            <label for="sourceUrl">URL o referencia verificable</label>
+            <input id="sourceUrl" placeholder="https://...">
+          </div>
           <div class="field">
             <label for="notes">Notas operativas</label>
-            <textarea id="notes" placeholder="Vía cerrada, centro de salud afectado, necesidad reportada..."></textarea>
+            <textarea id="notes" placeholder="Describir solo hechos observados o reportes atribuibles. Evitar cifras de víctimas sin fuente oficial."></textarea>
           </div>
           <button id="addBtn" class="primary">Agregar / actualizar</button>
         </section>
@@ -525,16 +607,29 @@
 
         <section class="section">
           <h2>Importar CSV</h2>
-          <p class="hint">Pega filas con encabezado: zona,estado,poblacion,lat,lon,danio,aislamiento,salud,agua,reportes,verificado,notas</p>
-          <textarea id="csvInput" placeholder="zona,estado,poblacion,lat,lon,danio,aislamiento,salud,agua,reportes,verificado,notas"></textarea>
+          <p class="hint">Pega filas con encabezado: zona,estado,poblacion,lat,lon,danio,aislamiento,salud,agua,reportes,verificado,tipo_fuente,confirmaciones,fuente,url,notas</p>
+          <textarea id="csvInput" placeholder="zona,estado,poblacion,lat,lon,danio,aislamiento,salud,agua,reportes,verificado,tipo_fuente,confirmaciones,fuente,url,notas"></textarea>
           <div class="grid-2">
             <button id="importBtn">Importar</button>
-            <button id="sampleBtn">Restaurar ejemplo</button>
+            <button id="templateBtn">Plantilla CSV</button>
           </div>
+          <div class="alert">La herramienta ya no incluye datos de ejemplo. Cada fila debe tener fuente trazable; lo no contrastado queda marcado como pendiente.</div>
         </section>
       </aside>
 
       <section class="workspace">
+        <div class="official">
+          <h2>Hechos oficiales del evento</h2>
+          <div class="official-grid" id="officialFacts"></div>
+          <div class="link-row">
+            <button id="copernicusLink">Copernicus EMSR884</button>
+            <button id="usgsLink">USGS M7.5</button>
+            <button id="gdacsLink">GDACS M7.5</button>
+            <button id="gdacsForeshockLink">GDACS M7.2</button>
+          </div>
+          <div class="hint">Estos datos describen el evento sísmico y la activación de emergencia. Las zonas del ranking deben cargarse con evidencia propia, producto Copernicus o reporte oficial/terreno verificable.</div>
+        </div>
+
         <div class="kpis" id="kpis"></div>
 
         <div class="toolbar">
@@ -558,6 +653,7 @@
                 <th>Población</th>
                 <th>Indicadores</th>
                 <th>Fuente</th>
+                <th>Publicación</th>
                 <th>Notas</th>
                 <th>Acciones</th>
               </tr>
@@ -572,12 +668,28 @@
 
   <script>
     const DEFAULT_WEIGHTS = {
-      damage: 30,
-      population: 20,
-      access: 20,
-      health: 15,
-      water: 10,
-      confidence: 5
+      damage: 28,
+      population: 18,
+      access: 18,
+      health: 14,
+      water: 12,
+      confidence: 10
+    };
+
+    const OFFICIAL_FACTS = [
+      ["Evento principal", "M7.5, 24 jun 2026 22:05:11 UTC", "USGS revisado"],
+      ["Localización", "16 km SO de Morón, Venezuela", "USGS"],
+      ["Profundidad", "10 km", "USGS/GDACS"],
+      ["Exposición modelada", "6,1 millones en MMI >= VII", "GDACS M7.5"],
+      ["Precursor", "M7.2, 24 jun 2026 22:04 UTC", "GDACS"],
+      ["Copernicus", "Rapid Mapping para evaluación de daños", "EMSR884"]
+    ];
+
+    const OFFICIAL_LINKS = {
+      copernicus: "https://mapping.emergency.copernicus.eu/activations/EMSR884/",
+      usgs: "https://earthquake.usgs.gov/earthquakes/eventpage/us6000t7zp",
+      gdacs: "https://www.gdacs.org/report.aspx?eventid=1548377&eventtype=EQ",
+      gdacsForeshock: "https://gdacs.org/report.aspx?episodeid=1714423&eventid=1548473&eventtype=EQ"
     };
 
     function uid() {
@@ -592,75 +704,8 @@
       return JSON.parse(JSON.stringify(value));
     }
 
-    const SAMPLE_ZONES = [
-      {
-        id: uid(),
-        zone: "La Guaira litoral central",
-        state: "La Guaira",
-        population: 112000,
-        lat: 10.603,
-        lon: -66.934,
-        damage: 4,
-        access: 4,
-        health: 3,
-        water: 4,
-        reports: 9,
-        verified: true,
-        notes: "Ejemplo: posible bloqueo vial y alta densidad costera. Sustituir por producto Copernicus/terreno.",
-        updated: new Date().toISOString()
-      },
-      {
-        id: uid(),
-        zone: "Catia y oeste de Caracas",
-        state: "Distrito Capital",
-        population: 268000,
-        lat: 10.512,
-        lon: -66.955,
-        damage: 3,
-        access: 2,
-        health: 4,
-        water: 3,
-        reports: 14,
-        verified: false,
-        notes: "Ejemplo: mucha población expuesta, requiere verificación rápida de infraestructura crítica.",
-        updated: new Date().toISOString()
-      },
-      {
-        id: uid(),
-        zone: "Guarenas-Guatire",
-        state: "Miranda",
-        population: 196000,
-        lat: 10.47,
-        lon: -66.62,
-        damage: 2,
-        access: 3,
-        health: 2,
-        water: 2,
-        reports: 5,
-        verified: false,
-        notes: "Ejemplo: revisar autopista, puentes y centros de distribución.",
-        updated: new Date().toISOString()
-      },
-      {
-        id: uid(),
-        zone: "Maracay eje urbano",
-        state: "Aragua",
-        population: 309000,
-        lat: 10.246,
-        lon: -67.595,
-        damage: 2,
-        access: 2,
-        health: 3,
-        water: 2,
-        reports: 6,
-        verified: true,
-        notes: "Ejemplo: prioridad media por población y servicios regionales.",
-        updated: new Date().toISOString()
-      }
-    ];
-
     const state = {
-      zones: load("ove_zones", SAMPLE_ZONES),
+      zones: loadZones(),
       weights: load("ove_weights", DEFAULT_WEIGHTS),
       filter: "all",
       search: "",
@@ -674,6 +719,7 @@
       empty: document.getElementById("empty"),
       tabs: document.getElementById("tabs"),
       kpis: document.getElementById("kpis"),
+      officialFacts: document.getElementById("officialFacts"),
       search: document.getElementById("search"),
       sort: document.getElementById("sort")
     };
@@ -685,6 +731,19 @@
       } catch {
         return deepClone(fallback);
       }
+    }
+
+    function loadZones() {
+      const zones = load("ove_zones", []);
+      return zones
+        .filter(zone => !String(zone.notes || "").startsWith("Ejemplo:"))
+        .map(zone => ({
+          ...zone,
+          sourceType: zone.sourceType || "field",
+          sourceName: zone.sourceName || "",
+          sourceUrl: zone.sourceUrl || "",
+          confirmations: Number(zone.confirmations) || (zone.verified ? 2 : 1)
+        }));
     }
 
     function save() {
@@ -703,7 +762,33 @@
 
     function confidenceScore(zone) {
       const reportScore = clamp(Math.log10((Number(zone.reports) || 0) + 1) / Math.log10(21) * 3, 0, 3);
-      return clamp(reportScore + (zone.verified ? 2 : 0), 0, 5);
+      const sourceScore = zone.sourceUrl || zone.sourceName ? 1 : 0;
+      const confirmationScore = clamp(Number(zone.confirmations) || 0, 0, 3);
+      const verifiedScore = zone.verified ? 1 : 0;
+      return clamp(reportScore * 0.6 + sourceScore + confirmationScore * 0.7 + verifiedScore, 0, 5);
+    }
+
+    function isPublishable(zone) {
+      return Boolean(zone.verified && (zone.sourceUrl || zone.sourceName) && Number(zone.confirmations) >= 2);
+    }
+
+    function publicationStatus(zone) {
+      if (isPublishable(zone)) return ["medium", "Publicable"];
+      if (!zone.sourceUrl && !zone.sourceName) return ["critical", "Sin fuente"];
+      if (!zone.verified) return ["high", "Pendiente"];
+      return ["high", "Falta contraste"];
+    }
+
+    function sourceLabel(value) {
+      return {
+        copernicus: "Copernicus EMS",
+        gdacs: "GDACS",
+        usgs: "USGS",
+        official: "Autoridad/Protección Civil",
+        ngo: "ONG/organismo",
+        field: "Terreno",
+        media: "Medio verificado"
+      }[value] || "Fuente";
     }
 
     function score(zone) {
@@ -746,7 +831,7 @@
           <strong>${value}</strong>
         </div>
       `).join("");
-      els.formula.textContent = "Score = daño + población expuesta + aislamiento + salud + agua/alimentos + confianza. Cada indicador se normaliza 0-5 y luego se pondera hasta 100.";
+      els.formula.textContent = "Score operativo = daño + población expuesta + aislamiento + salud + agua/alimentos + confianza de evidencia. La confianza sube con fuente trazable, URL/referencia, confirmaciones y verificación.";
       els.weights.querySelectorAll("input").forEach(input => {
         input.addEventListener("input", event => {
           state.weights[event.target.dataset.weight] = Number(event.target.value);
@@ -754,6 +839,16 @@
           render();
         });
       });
+    }
+
+    function renderOfficialFacts() {
+      els.officialFacts.innerHTML = OFFICIAL_FACTS.map(([label, value, source]) => `
+        <div class="official-item">
+          <span>${label}</span>
+          <strong>${value}</strong>
+          <span>${source}</span>
+        </div>
+      `).join("");
     }
 
     function renderTabs(counts) {
@@ -780,7 +875,7 @@
       const withScore = state.zones.map(zone => ({ ...zone, score: score(zone), level: level(score(zone)) }));
       return withScore
         .filter(zone => state.filter === "all" || zone.level[0] === state.filter)
-        .filter(zone => !q || [zone.zone, zone.state, zone.notes].join(" ").toLowerCase().includes(q))
+        .filter(zone => !q || [zone.zone, zone.state, zone.notes, zone.sourceName, zone.sourceType].join(" ").toLowerCase().includes(q))
         .sort((a, b) => {
           if (state.sort === "population") return b.population - a.population;
           if (state.sort === "damage") return b.damage - a.damage || b.score - a.score;
@@ -793,12 +888,12 @@
       const critical = withScore.filter(z => z.level[0] === "critical").length;
       const high = withScore.filter(z => z.level[0] === "high").length;
       const exposed = withScore.filter(z => z.score >= 55).reduce((sum, z) => sum + (Number(z.population) || 0), 0);
-      const verified = withScore.filter(z => z.verified).length;
+      const publishable = withScore.filter(isPublishable).length;
       const items = [
         ["Zonas críticas", critical],
         ["Zonas altas", high],
         ["Población prioritaria", formatNumber(exposed)],
-        ["Zonas verificadas", `${verified}/${withScore.length}`]
+        ["Publicables", `${publishable}/${withScore.length}`]
       ];
       els.kpis.innerHTML = items.map(([label, value]) => `
         <div class="kpi"><span>${label}</span><strong>${value}</strong></div>
@@ -825,10 +920,16 @@
           </td>
           <td>
             <div class="source">
-              <strong>${zone.verified ? "Verificado" : "Sin verificar"}</strong>
-              <span>${formatNumber(zone.reports)} reportes</span>
+              <strong>${sourceLabel(zone.sourceType)}</strong>
+              <span>${escapeHtml(zone.sourceName || "Sin fuente concreta")}</span>
+              <span>${formatNumber(zone.reports)} reportes · ${formatNumber(zone.confirmations || 0)} confirmaciones</span>
               <span>${new Date(zone.updated).toLocaleString("es-VE")}</span>
+              ${zone.sourceUrl ? `<a href="${escapeHtml(zone.sourceUrl)}" target="_blank" rel="noopener">Abrir evidencia</a>` : ""}
             </div>
+          </td>
+          <td>
+            <span class="badge ${publicationStatus(zone)[0]}">${publicationStatus(zone)[1]}</span>
+            <div class="small">${zone.verified ? "Contrastado" : "Pendiente de contraste"}</div>
           </td>
           <td>${escapeHtml(zone.notes || "")}</td>
           <td>
@@ -848,6 +949,7 @@
     }
 
     function render() {
+      renderOfficialFacts();
       renderWeights();
       const withScore = state.zones.map(zone => ({ ...zone, score: score(zone), level: level(score(zone)) }));
       const counts = { all: withScore.length, critical: 0, high: 0, medium: 0, low: 0 };
@@ -860,6 +962,12 @@
     function upsertZone() {
       const zoneName = document.getElementById("zoneName").value.trim();
       if (!zoneName) return;
+      const sourceName = document.getElementById("sourceName").value.trim();
+      const sourceUrl = document.getElementById("sourceUrl").value.trim();
+      if (!sourceName && !sourceUrl) {
+        alert("Agrega una fuente concreta o una URL verificable antes de guardar.");
+        return;
+      }
       const existing = state.zones.find(item => item.zone.toLowerCase() === zoneName.toLowerCase());
       const data = {
         id: existing?.id || uid(),
@@ -874,6 +982,10 @@
         water: clamp(document.getElementById("water").value, 0, 5),
         reports: Number(document.getElementById("reports").value) || 0,
         verified: document.getElementById("verified").value === "true",
+        sourceType: document.getElementById("sourceType").value,
+        sourceName,
+        sourceUrl,
+        confirmations: clamp(document.getElementById("confirmations").value, 1, 5),
         notes: document.getElementById("notes").value.trim(),
         updated: new Date().toISOString()
       };
@@ -885,13 +997,15 @@
     }
 
     function clearForm() {
-      ["zoneName", "stateName", "population", "lat", "lon", "notes"].forEach(id => document.getElementById(id).value = "");
+      ["zoneName", "stateName", "population", "lat", "lon", "sourceName", "sourceUrl", "notes"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("damage").value = 3;
       document.getElementById("access").value = 2;
       document.getElementById("health").value = 2;
       document.getElementById("water").value = 2;
       document.getElementById("reports").value = 1;
-      document.getElementById("verified").value = "true";
+      document.getElementById("verified").value = "false";
+      document.getElementById("sourceType").value = "copernicus";
+      document.getElementById("confirmations").value = 1;
     }
 
     function editZone(id) {
@@ -908,6 +1022,10 @@
       document.getElementById("water").value = zone.water;
       document.getElementById("reports").value = zone.reports;
       document.getElementById("verified").value = String(zone.verified);
+      document.getElementById("sourceType").value = zone.sourceType || "field";
+      document.getElementById("confirmations").value = zone.confirmations || 1;
+      document.getElementById("sourceName").value = zone.sourceName || "";
+      document.getElementById("sourceUrl").value = zone.sourceUrl || "";
       document.getElementById("notes").value = zone.notes;
       document.getElementById("zoneName").focus();
     }
@@ -945,9 +1063,16 @@
       if (!text) return;
       const lines = text.split(/\r?\n/).filter(Boolean);
       const headers = parseCsvLine(lines.shift()).map(item => item.toLowerCase());
+      let skipped = 0;
       lines.forEach(line => {
         const values = parseCsvLine(line);
         const row = Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""]));
+        const sourceName = row.fuente || row.source || row.source_name || "";
+        const sourceUrl = row.url || row.source_url || "";
+        if (!sourceName && !sourceUrl) {
+          skipped += 1;
+          return;
+        }
         state.zones.push({
           id: uid(),
           zone: row.zona || row.zone || "Sin nombre",
@@ -961,6 +1086,10 @@
           water: clamp(row.agua || row.water, 0, 5),
           reports: Number(row.reportes || row.reports) || 0,
           verified: ["true", "si", "sí", "1", "verificado"].includes(String(row.verificado || row.verified).toLowerCase()),
+          sourceType: row.tipo_fuente || row.source_type || "field",
+          confirmations: clamp(row.confirmaciones || row.confirmations, 1, 5),
+          sourceName,
+          sourceUrl,
           notes: row.notas || row.notes || "",
           updated: new Date().toISOString()
         });
@@ -968,13 +1097,15 @@
       document.getElementById("csvInput").value = "";
       save();
       render();
+      if (skipped) alert(`${skipped} fila(s) no se importaron porque no tenían fuente ni URL verificable.`);
     }
 
     function exportCsv() {
-      const header = ["prioridad", "nivel", "zona", "estado", "poblacion", "lat", "lon", "danio", "aislamiento", "salud", "agua", "reportes", "verificado", "notas", "actualizado"];
+      const header = ["prioridad", "nivel", "publicable", "zona", "estado", "poblacion", "lat", "lon", "danio", "aislamiento", "salud", "agua", "reportes", "verificado", "tipo_fuente", "confirmaciones", "fuente", "url", "notas", "actualizado"];
       const lines = filteredZones().map(zone => [
         zone.score,
         zone.level[1],
+        isPublishable(zone) ? "si" : "no",
         zone.zone,
         zone.state,
         zone.population,
@@ -986,6 +1117,10 @@
         zone.water,
         zone.reports,
         zone.verified ? "si" : "no",
+        zone.sourceType,
+        zone.confirmations || 0,
+        zone.sourceName || "",
+        zone.sourceUrl || "",
         zone.notes,
         zone.updated
       ].map(csvEscape).join(","));
@@ -994,6 +1129,17 @@
       const a = document.createElement("a");
       a.href = url;
       a.download = `prioridades-humanitarias-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadTemplate() {
+      const header = "zona,estado,poblacion,lat,lon,danio,aislamiento,salud,agua,reportes,verificado,tipo_fuente,confirmaciones,fuente,url,notas";
+      const blob = new Blob([header + "\n"], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "plantilla-priorizador-humanitario.csv";
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -1015,15 +1161,15 @@
 
     document.getElementById("addBtn").addEventListener("click", upsertZone);
     document.getElementById("importBtn").addEventListener("click", importCsv);
-    document.getElementById("sampleBtn").addEventListener("click", () => {
-      state.zones = deepClone(SAMPLE_ZONES).map(zone => ({ ...zone, id: uid(), updated: new Date().toISOString() }));
-      save();
-      render();
-    });
+    document.getElementById("templateBtn").addEventListener("click", downloadTemplate);
     document.getElementById("exportBtn").addEventListener("click", exportCsv);
     document.getElementById("copernicusBtn").addEventListener("click", () => {
-      window.open("https://mapping.emergency.copernicus.eu/activations/EMSR884/", "_blank", "noopener");
+      window.open(OFFICIAL_LINKS.copernicus, "_blank", "noopener");
     });
+    document.getElementById("copernicusLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.copernicus, "_blank", "noopener"));
+    document.getElementById("usgsLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.usgs, "_blank", "noopener"));
+    document.getElementById("gdacsLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.gdacs, "_blank", "noopener"));
+    document.getElementById("gdacsForeshockLink").addEventListener("click", () => window.open(OFFICIAL_LINKS.gdacsForeshock, "_blank", "noopener"));
     els.search.addEventListener("input", event => {
       state.search = event.target.value;
       renderRows();
